@@ -1,0 +1,72 @@
+{% extends 'Myauth/base_m.html' %}
+{% load staticfiles %}
+{% block manager %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+</style>
+{% endblock %}
+<div id="tt" class="easyui-tabs" style="width:100%;height:100%;">
+    <div title="导入成绩" style="overflow:auto;padding:20px;display:none;">
+        <input type="file" id="file">
+        <input type="button" onclick="sendTarget()" value="导入"/>
+    </div>
+</div>
+<script>
+        var result = []
+		$(function(){
+			$('#menu9').addClass('active')
+			$('#allmenu').accordion('select', '录入课程')
+		})
+		//首先监听input框的变动，选中一个新的文件会触发change事件
+  document.querySelector("#file").addEventListener("change", function () {
+    //获取到选中的文件
+    var file = document.querySelector("#file").files[0];
+    var type = file.name.split('.');
+    if (type[type.length - 1] !== 'xlsx' && type[type.length - 1] !== 'xls') {
+      alert('只能选择excel文件导入');
+      return false;
+    }
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const zzexcel = window.XLS.read(data, {
+        type: 'binary'
+      });
+      for (let i = 0; i < zzexcel.SheetNames.length; i++) {
+        const newData = window.XLS.utils.sheet_to_json(zzexcel.Sheets[zzexcel.SheetNames[i]]);
+        result.push(...newData)
+      }
+    }
+  });
+    var sendTarget = function(){
+        if(result==null){
+            return false
+        }
+         var form = new FormData(); // FormData 对象
+        form.append("data", JSON.stringify(result)); // 文件对象
+        $.ajax({
+            url: "{% url 'Myauth:批量导入成绩' %}", //url地址
+            type: 'POST',                 //上传方式
+            data: form,                   // 上传formdata封装的数据
+            dataType: 'JSON',
+            cache: false,                  // 不缓存
+            processData: false,        // jQuery不要去处理发送的数据
+            contentType: false,         // jQuery不要去设置Content-Type请求头
+            success:function (data) {           //成功回调
+               if(data.datalist=='1'){
+                alert("添加成功")
+               }else{
+                alert(data.datalist)
+               }
+            },
+           error:function (data) {           //失败回调
+                console.log(data);
+            }
+        });
+    }
+</script>
+{% endblock %}

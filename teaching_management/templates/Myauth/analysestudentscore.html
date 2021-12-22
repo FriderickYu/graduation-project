@@ -1,0 +1,80 @@
+{% extends 'Myauth/base.html' %}
+{% load staticfiles %}
+{% block student %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+</style>
+{% endblock %}
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+            <th field="course_name" width="178" align="center">任课老师</th>
+			<th field="course_credit" width="323" align="center">班级</th>
+            <th field="course_teacher" width="178" align="center">学分</th>
+			<th field="course_teacher" width="178" align="center">分数</th>
+            <th field="course_teacher" width="178" align="center">排名</th>
+            <th field="course_teacher" width="178" align="center">优生率</th>
+            <th field="course_teacher" width="178" align="center">及格率</th>
+            <th field="course_teacher" width="178" align="center">平均分</th>
+            <th field="course_teacher" width="178" align="center">最高分</th>
+            <th field="course_teacher" width="178" align="center">最低分</th>
+			<th field="course_teacher" width="178" align="center">方差</th>
+			<th field="course_teacher" width="178" align="center">标准差</th>
+			<th field="course_teacher" width="178" align="center">变异系数</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for data in datalist%}
+	<tr class="trbody">
+		<td width="178" align="center"><input type="checkbox" name="courseID" value="{{data.course_id}}" />{{data.course_id}}</td>
+		<td width="178" align="center">{{data.course_type}}</td>
+		<td width="178" align="center">{{data.course_name}}</td>
+        <td width="178" align="center">{{data.teacher_name}}</td>
+		<td width="323" align="center">{{data.clbum}}</td>
+        <td width="323" align="center">{{data.credit}}</td>
+		<td width="178" align="center">{{data.score}}</td>
+        <td width="178" align="center">{{data.sortscore}}</td>
+        <td width="178" align="center">{{data.nicescore}}</td>
+        <td width="178" align="center">{{data.goodscore}}</td>
+        <td width="178" align="center">{{data.meanscore}}</td>
+        <td width="178" align="center">{{data.maxscore}}</td>
+        <td width="178" align="center">{{data.minscore}}</td>
+		<td width="178" align="center">{{data.varscore}}</td>
+		<td width="178" align="center">{{data.stdscore}}</td>
+		<td width="178" align="center">{{data.changescore}}</td>
+	</tr>
+	{%endfor%}
+    <div style="display:flex;flex-direction:row;"><div>平均绩点</div><div>{{course_score|safe}}</div><div>班级排名</div><div>{{sortnum|safe}}</div></div>
+	<div><input id="compare" type="button" value="比较成绩"/></div>
+	</tbody>
+</table>
+<script>
+	$("#compare").click(function(){
+		if($("input[name='courseID']:checked").length<=1){
+			alert("必须选中2个科目以上")
+			return false
+		}
+		let id_list = []
+		let changescore_list = []
+		let score_list = []
+		$("input[name='courseID']:checked").each(function(){
+			id_list.push($(this).val())
+			changescore_list.push($(this).parent().parent().children().eq(15).text())
+			score_list.push($(this).parent().parent().children().eq(6).text())
+		})
+		let url = "{% url 'Myauth:比较成绩' %}"
+		$.get(url, {'id_list':id_list,'score_list':score_list,'changescore_list':changescore_list}, function(data){
+			if(data=="1"){
+				location.href = "{% url 'Myauth:比较成绩页' %}"
+			}
+		})
+	})
+</script>
+{% endblock %}

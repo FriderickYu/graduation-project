@@ -1,0 +1,133 @@
+{% extends 'Myauth/base.html' %}
+{% load staticfiles %}
+
+{% block style %}
+<style>
+    td{
+        text-align: center;
+        cursor: default;
+    }
+</style>
+{% endblock %}
+
+{% block student %}
+<div style="margin:20px 0;">
+    <a href="#" id="update_stuinfo" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="margin-left: 45%">修改</a>
+    <a href="#" id="save_stuinfo" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="margin-left: 0%">保存</a>
+    <a href="#" onclick='tableToExcel()' id="save_excel" class="easyui-linkbutton" style="margin-left: 0%">excel</a>
+</div>
+<table id="table_wrapper" width=60% height=70%  bgcolor=#ccc cellspacing="3" align="center">
+    <tr bgcolor="white">
+        <td>学号</td>
+        <td>{{studentinfo.student_id}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>姓名</td>
+        <td>{{studentinfo.name}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>性别</td>
+        <td>{{studentinfo.sex}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>出生日期</td>
+        <td>{{studentinfo.birthday}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>学院</td>
+        <td>{{studentinfo.department}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>入学日期</td>
+        <td>{{studentinfo.admission_date}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>班级</td>
+        <td>{{studentinfo.clb}}</td>
+    </tr>
+    <tr bgcolor="white">
+        <td>电话</td>
+        <td><input id="tel" readonly="readonly" style="border:0px;outline: none;height:100%;line-height:100%;" value={{studentinfo.phone}} /></td>
+    </tr>
+    <tr bgcolor="white">
+        <td>邮箱</td>
+        <td><input id="email" readonly="readonly" style="border:0px;outline: none;height:100%;line-height:100%;" value={{studentinfo.email}} /></td>
+    </tr>
+</table>
+
+
+<script>
+        var label = false
+		$(function(){
+			$('#menu2').addClass('active')
+			$('#allmenu').accordion('select', '个人信息')
+		})
+		$("#update_stuinfo").click(function(){
+		    label = true
+            document.getElementById("tel").removeAttribute("readOnly")
+            document.getElementById("email").removeAttribute("readOnly")
+            })
+
+        $("#save_stuinfo").click(function(){
+            var url = "{% url 'Myauth:修改个人信息' %}"
+            if(label==false){return false}
+            $.get(url, {'tel':document.getElementById("tel").value , 'email':document.getElementById("email").value}, function(data){
+                if (data.label=="1"){
+                	alert("信息修改成功！")
+                	location.reload();
+                }
+                else{
+                    alert("信息修改失败");
+                    location.reload();
+                }
+            })
+        })
+
+       function tableToExcel(){
+      //要导出的json数据
+      const jsonData = [
+        {
+          name:'{{studentinfo.name|safe}}',
+          sex:'{{studentinfo.sex|safe}}',
+          student_id:'{{studentinfo.student_id|safe}}',
+          birthday:'{{studentinfo.birthday|safe}}',
+          department:'{{studentinfo.department|safe}}',
+          admission_date:'{{studentinfo.admission_date|safe}}',
+          clbum:'{{studentinfo.clbum|safe}}',
+          phone:'{{studentinfo.phone|safe}}',
+          email:'{{studentinfo.email|safe}}',
+        }
+      ]
+      //列标题
+      let str = '<tr><td>姓名</td><td>性别</td><td>学号</td><td>出生日期</td><td>学院</td><td>入学日期</td><td>班级</td><td>电话</td><td>邮箱</td></tr>';
+      //循环遍历，每行加入tr标签，每个单元格加td标签
+      for(let i = 0 ; i < jsonData.length ; i++ ){
+        str+='<tr>';
+        for(let item in jsonData[i]){
+            //增加\t为了不让表格显示科学计数法或者其他格式
+            str+=`<td>${ jsonData[i][item] + '\t'}</td>`;
+        }
+        str+='</tr>';
+      }
+      //Worksheet名
+      let worksheet = 'Sheet1'
+      let uri = 'data:application/vnd.ms-excel;base64,';
+
+      //下载的表格模板数据
+      let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+      <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+        <x:Name>${worksheet}</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+        </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body><table>${str}</table></body></html>`;
+      //下载模板
+      window.location.href = uri + base64(template)
+    }
+    //输出base64编码
+    function base64 (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+
+</script>
+
+{% endblock %}

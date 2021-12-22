@@ -1,0 +1,57 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>邮件</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/default/easyui.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/icon.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.easyui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js' %}"></script>
+    <style>
+        .login-body
+        {
+            margin-left: 50% !important;
+            position: relative;
+            left: -194px;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center">
+    <div class="login-body">
+        <div class="easyui-panel" title="发送邮件以找回密码" style="width:100%;max-width:400px;padding:30px 60px;">
+            {% csrf_token %}
+            <div style="margin-bottom:20px">
+                <input id="email" class="easyui-textbox" validType="email" name="email" type="email" label="邮件:" labelPosition="top" data-options="prompt:'请输入已注册的邮件'" style="width:100%;">
+            </div>
+            <div><button id="btn_send" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">发送</button></div>
+            <div><a href="{% url 'Myauth:登录' %}" class="easyui-linkbutton" iconCls="icon-undo" style="width:100%;height:32px">返回到登录界面</a></div>
+        </div>
+    </div>
+</div>
+<script>
+        $('#btn_send').click(function(){
+            var url = "{% url 'Myauth:找回密码' %}"
+           	let email = $('#email').val()
+
+                if(email==""){
+                alert("邮件不能为空");
+                return false}
+
+            $.get(url, {'email': email}, function(data){
+                if (data=="1"){
+                	alert("请查看邮件");
+                }
+                else{
+                    alert("用户不存在！");
+                    location.reload();
+                }
+            })
+
+        })
+
+    </script>
+</body>
+</html>

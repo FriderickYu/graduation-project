@@ -1,0 +1,167 @@
+{% extends 'Myauth/base.html' %}
+{% load staticfiles %}
+
+{% block style %}
+<style>
+    td{
+        text-align: center;
+        cursor: default;
+    }
+    th{
+        cursor: pointer;
+        background-color: rgb(231, 231, 231);  
+        text-align: center;       
+    }
+    th:hover{
+        background-color: rgb(255, 255, 255);
+    }
+</style>
+{% endblock %}
+
+{% block student %}
+    <table width=100% height=100%  bgcolor=#ccc cellspacing="3" align="center">
+        <tr bgcolor="white">
+           <th colspan="2" width=12.5%></th>
+           <th width=12.5%>星期一</th>
+           <th width=12.5%>星期二</th>
+           <th width=12.5%>星期三</th>
+           <th width=12.5%>星期四</th>
+           <th width=12.5%>星期五</th>
+           <th width=12.5%>星期六</th>
+           <th width=12.5%>星期日</th>
+        </tr>
+        <tr bgcolor="white" class="first schedule">
+            <td rowspan="4" width=3%>上午</td>
+            <td>第一节课(08:00~08:45)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>    
+        </tr>
+        <tr bgcolor="white" class="second schedule">
+            <td>第二节课(08:55~09:40) </td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+        </tr>
+        <tr bgcolor="white" class="third schedule">
+            <td>第三节课(10:10~10:55) </td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+        </tr>
+        <tr bgcolor="white" class="fourth schedule">
+            <td>第四节课(11:05~11:50)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+        </tr>
+        <tr bgcolor="white" class="fifth schedule">
+            <td rowspan="4">下午</td>
+            <td>第五节课(14:00~14:45)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+        </tr>
+        <tr bgcolor="white" class="sixth schedule">
+           <td>第六节课(14:55~15:40)</td>
+           <td class="Mon"></td>
+           <td class="Tues"></td>
+           <td class="Wed"></td>
+           <td class="Thur"></td>
+           <td class="Fri"></td>
+           <td class="Satu"></td> 
+           <td class="Sun"></td>   
+        </tr>
+        <tr bgcolor="white" class="seventh schedule">
+            <td>第七节课(16:10~16:55)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+         </tr>
+         <tr bgcolor="white" class="enigth schedule">
+            <td>第八节课(17:05~17:50)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+         </tr>
+         <tr bgcolor="white" class="ninth schedule">
+             <td rowspan="3">晚上</td>
+            <td>第九节课(18:30~19:15)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+         </tr>
+         <tr bgcolor="white" class="tenth schedule">
+            <td>第十节课(19:25~20:10)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td>
+            <td class="Sun"></td>
+         </tr>
+         <tr bgcolor="white" id="box" class="eleven schedule">
+            <td>第十一节课(20:20~21:05)</td>
+            <td class="Mon"></td>
+            <td class="Tues"></td>
+            <td class="Wed"></td>
+            <td class="Thur"></td>
+            <td class="Fri"></td>
+            <td class="Satu"></td> 
+            <td class="Sun"></td>   
+         </tr>
+   </table>
+<script>
+    var datalist = {{course_list|safe}}
+    let objlist = document.getElementsByTagName('tr')
+    for(let i=0;i<datalist.length;i++){
+        let row = parseInt(datalist[i].course_row);
+        let column = parseInt(datalist[i].course_column);
+
+        if(row!=1 && row!=5 && row!=9){
+            column -= 1
+        }
+        objlist[row].children[column+1].innerHTML = datalist[i].course_id + '</br>' + datalist[i].course_name + '</br>' + datalist[i].teacher_name + '</br>' + datalist[i].course_room
+    }
+
+    $(function(){
+        $('#menu5').addClass('active')
+        $('#allmenu').accordion('select', '查看课程表')
+    });
+
+
+</script>
+{% endblock %}

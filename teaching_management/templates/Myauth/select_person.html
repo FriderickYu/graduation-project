@@ -1,0 +1,164 @@
+{% extends 'Myauth/base_m.html' %}
+{% block manager %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+    .left{
+            width:150px;
+            border-right:1px solid rgba(0,0,0,0.2);
+            text-align:center;
+        }
+    .left:hover{
+    cursor:pointer;
+    background-color:red;
+	}
+</style>
+
+
+<div id="tt" class="easyui-tabs" style="width:100%;height:100%;">
+    <div title="教师" style="overflow:auto;padding:5px;display:none;">
+        <input id="search_teacher" size="30" style="line-height:20px;border:1px solid #ccc">
+        <a href="#" id="search_t">搜索</a>
+        <a href="#" id="delete_teacher" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="margin-left: 0%">删除教师用户</a>
+        <table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+            <thead>
+            <tr>
+                <th align="center" width="200">姓名</th>
+                <th align="center" width="200">账号</th>
+                <th align="center" width="200">身份</th>
+            </tr>
+            </thead>
+            <tbody id="table_body">
+            {%for user in userlist%}
+            {% if user.user_type == '老师' %}
+            <tr class="trbody">
+                <td class="left" align="center" width="200">{{user.currentname}}</td>
+                <td align="center" width="200"><input class="teacher_id" type="checkbox" value="{{user.name}}">{{user.name}}</td>
+                <td align="center" width="200">{{user.user_type}}</td>
+            </tr>
+            {% endif %}
+            {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div title="学生" style="overflow:auto;padding:5px;display:none;">
+        <input id="search_student" size="30" style="line-height:20px;border:1px solid #ccc">
+        <a href="#" id="search_s">搜索</a>
+        <a href="#" id="delete_student" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="margin-left: 0%">删除学生用户</a>
+        <table id="table_wrapper1" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+            <thead>
+            <tr>
+                <th align="center" width="200">姓名</th>
+                <th align="center" width="200">账号</th>
+                <th align="center" width="200">身份</th>
+            </tr>
+            </thead>
+            <tbody id="table_body1">
+            {%for user in userlist%}
+            {% if user.user_type == '学生' %}
+            <tr class="trbody">
+                <td class="left" align="center" width="200">{{user.currentname}}</td>
+                <td align="center" width="200"><input type="checkbox" value="{{user.name}}">{{user.name}}</td>
+                <td align="center" width="200">{{user.user_type}}</td>
+            </tr>
+            {% endif %}
+            {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+        $(function(){
+			$('#menu4').addClass('active')
+			$('#allmenu').accordion('select', '审核个人信息')
+		})
+        $(".left").click(function(e){
+            console.log($(this).next().text())
+            location.href="/person_detail"+$(this).next().text();
+        })
+    </script>
+
+<script type="text/javascript">
+    var teacherId = ""
+	var currentObj = null
+	$(".trbody").click((e)=>{
+		currentObj = e.currentTarget
+		for(let i=0;i<e.currentTarget.parentNode.children.length;i++){
+			e.currentTarget.parentNode.children[i].style.background = "#fff"
+		}
+		e.currentTarget.style.background = "yellow"
+	})
+    $("#delete_teacher").click(function(){
+        $("#table_body").find('input').each(function(index,e){
+            if($(e).prop('checked')){
+                teacherId += $(this).val() + ','
+            }
+        })
+		let url = "{% url 'Myauth:删除教师用户' %}"
+		$.get(url, {'id':teacherId}, function(data){
+            if (data=="1"){
+                alert("删除教师用户成功！")
+                location.reload();
+            }
+            else{
+                alert("删除教师用户失败");
+                location.reload();
+            }
+        })
+	})
+
+    var studentId = ""
+    $("#delete_student").click(function(){
+        $("#table_body1").find('input').each(function(index,e){
+            if($(e).prop('checked')){
+                studentId += $(this).val() + ','
+            }
+        })
+		let url = "{% url 'Myauth:删除学生用户' %}"
+		$.get(url, {'id':studentId}, function(data){
+            if (data=="1"){
+                alert("删除学生用户成功！")
+                location.reload();
+            }
+            else{
+                alert("删除学生用户失败");
+                location.reload();
+            }
+        })
+	})
+
+    $("#search_t").click(function(){
+        let url = "{% url 'Myauth:查找人' %}"
+        let el = $("#table_body")
+		$.get(url, {'id':$("#search_teacher").val()}, function(data){
+            if (data=="0"){
+                alert("没有这个老师");
+                location.reload();
+            }
+            else{
+                let content = '<tr class="trbody"><td class="left" align="center" width="200">'+data.name+'</td>'
+                content += '<td align="center" width="200">'+data.id+'</td>'
+                content += '<td align="center" width="200">'+data.type+'</td></tr>'
+                el.html(content)
+            }
+        })
+    })
+
+    $("#search_s").click(function(){
+            let url = "{% url 'Myauth:查找人' %}"
+            let el = $("#table_body1")
+            $.get(url, {'id':$("#search_student").val()}, function(data){
+                if (data=="0"){
+                    alert("没有这个学生");
+                    location.reload();
+                }
+                else{
+                    let content = '<tr class="trbody"><td class="left" align="center" width="200">'+data.name+'</td>'
+                    content += '<td align="center" width="200">'+data.id+'</td>'
+                    content += '<td align="center" width="200">'+data.type+'</td></tr>'
+                    el.html(content)
+                }
+            })
+        })
+
+</script>
+{% endblock %}

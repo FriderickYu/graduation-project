@@ -1,0 +1,112 @@
+{% extends 'Myauth/base_t.html' %}
+{% load staticfiles %}
+{% block teacher %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+	.search{
+		width:50px;
+		height:35px;
+	}
+	.search:hover{
+		cursor:pointer;
+		color:#ddd;
+	}
+</style>
+{% endblock %}
+<div style="display:flex;flex-direction:column">
+	<div><a style="text-decoration:none;margin:10px" href="{% url 'Myauth:查看成绩页' %}">返回</a></div>
+	<div style="display:flex;flex-direction:row;"><div id="search" class="search">搜索</div><div><input id="content" type="text" /></div></div>
+</div>
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">学生</th>
+			<th field="course_room" width="323" align="center">学生账号</th>
+			<th field="course_credit" width="323" align="center">班级</th>
+			<th field="course_teacher" width="178" align="center">分数</th>
+            <th field="course_teacher" width="178" align="center">操作</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for data in datalist%}
+	<tr class="trbody">
+		<td width="178" align="center">{{data.course_id}}</td>
+		<td width="178" align="center">{{data.course_type}}</td>
+		<td width="178" align="center">{{data.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{data.student_name}}</td>
+		<td width="323" align="center">{{data.student_id}}</td>
+		<td width="323" align="center">{{data.class_name}}</td>
+		<td width="178" align="center">{{data.score}}</td>
+        <td width="178" align="center"><input class="update" type="button" value="修改"/></td>
+        <td width="178" align="center"><input class="save" type="button" value="保存修改" /></td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+<script>
+
+    $(".update").click(function(){
+        $(this).parent().prev().html("<input type='text' />")
+    })
+
+    $(".save").click(function(){
+        let data = {'course_id':$(this).parent().parent().children(":first").text(),'student_id':$(this).parent().prev().prev().prev().prev().text(),'score':$(this).parent().prev().prev().children(":first").val()}
+        let url = "{% url 'Myauth:修改分数' %}"
+        $.get(url, data, function(data){
+            if (data=="1"){
+                alert("修改分数成功！")
+                location.reload();
+            }
+            else if(data=='0'){
+                alert("分数格式不正确,修改分数失败！");
+                location.reload();
+            }
+        })
+    })
+
+    $("#search").click(function(){
+    	let username = $("#content").val()
+    	let data = {'username':username,'course_id':{{course_id|safe}}}
+    	let url = "{% url 'Myauth:搜索学生成绩' %}"
+        $.get(url, data, function(data){
+        	let content = '<tr class="trbody">'
+        	 content += '<td width="178" align="center">'+data.data.course_id+'</td><td width="178" align="center">'+data.data.course_type+'</td><td width="178" align="center">'+data.data.course_name+'</td><td width="178" align="center">'+data.data.student_name+'</td>'
+             content += '<td width="323" align="center">'+data.data.student_id+'</td><td width="323" align="center">'+data.data.class_name+'</td><td width="178" align="center">'+data.data.score+'</td>'
+             content += '<td width="178" align="center"><input class="update" type="button" value="修改"/></td><td width="178" align="center"><input class="save" type="button" value="保存修改" /></td></tr>'
+            $("#table_body").html(content)
+            if(data=='0'){
+                alert("这个学生不存在！");
+                location.reload();
+            }
+
+       		$(".update").click(function(){
+				$(this).parent().prev().html("<input type='text' />")
+			})
+
+			$(".save").click(function(){
+				let data = {'course_id':$(this).parent().parent().children(":first").text(),'student_id':$(this).parent().prev().prev().prev().prev().text(),'score':$(this).parent().prev().prev().children(":first").val()}
+				let url = "{% url 'Myauth:修改分数' %}"
+				$.get(url, data, function(data){
+					if (data=="1"){
+						alert("修改分数成功！")
+						location.reload();
+					}
+					else if(data=='0'){
+						alert("分数格式不正确,修改分数失败！");
+						location.reload();
+					}
+				})
+			})
+        })
+    })
+
+</script>
+{% endblock %}

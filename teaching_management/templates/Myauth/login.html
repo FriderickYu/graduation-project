@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>毕设用-登录界面</title>
+</head>
+<!--CSS引用格式-->
+<link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/default/easyui.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/icon.css' %}">
+<script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.easyui.min.js' %}"></script>
+<style>
+        .login-body
+        {
+            margin-left: 50% !important;
+            position: relative;
+            left: -194px;
+        }
+</style>
+<body>
+<div style="text-align: center">
+    <div class="login-body">
+        <div style="margin:20px 0;"></div>
+        <div class="easyui-panel" title="蒹葭教学管理系统" style="width:100%;max-width:400px;padding:30px 60px;">
+            <div style="margin-bottom:20px">
+                <input id="user_name" class="easyui-textbox" name="user_name" label="账号:" labelPosition="top" data-options="prompt:'请输入用户名'" style="width:100%;">
+            </div>
+            <div style="margin-bottom:20px">
+                <input id="user_password" class="easyui-passwordbox" lastDelay="50" name="user_password" label="密码:" labelPosition="top" data-options="prompt:'密码'" style="width:100%;">
+            </div>
+            <div>
+                <button id="login" type="submit" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">登录</button>
+                <span>忘记密码？<a href="{% url 'Myauth:找回' %}">找回密码</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+$('#login').click(function(){
+            var url = "{% url 'Myauth:验证' %}"
+                username = $('#user_name').val()
+                password = $('#user_password').val()
+                if(username==""){
+                alert("账号不能为空");
+                return false}
+                if(password==""){
+                alert("密码不能为空");
+                return false}
+            $.get(url, {'username': username, 'password':password}, function(data){
+                if (data.errorCode==0){
+                    location.href= "{% url 'Myauth:学生主页' %}"
+                }
+                else if(data.errorCode==1){
+                    alert(data.errorsList);
+                    location.reload();
+                }else if(data.errorCode==2){
+                    location.href= "{% url 'Myauth:老师主页' %}"
+                }
+                else if(data.errorCode==3){
+                    location.href= "{% url 'Myauth:管理员主页' %}"
+                }
+            })
+
+        })
+</script>
+</body>
+</html>

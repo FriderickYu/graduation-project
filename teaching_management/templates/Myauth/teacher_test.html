@@ -1,0 +1,52 @@
+{% extends 'Myauth/base_t.html' %}
+{% block teacher %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+	table>tbody>tr:hover{background-color:red}
+</style>
+<!--datagrid-->
+
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_type" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_credit" width="323" align="center">所属班级</th>
+			<th field="course_grade" width="323" align="center">学院</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">监考教师</th>
+            <th field="course_class" width="178" align="center">开始时间</th>
+            <th field="course_class" width="178" align="center">结束时间</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for course in courselist%}
+	<tr class="trbody">
+		<td width="178" align="center">{{course.course_id}}</td>
+		<td width="178" align="center">{{course.course_type}}</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="323" align="center">{{course.course_class}}</td>
+		<td width="323" align="center">{{course.department}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teachername}}</td>
+        <td width="178" align="center">{{course.starttime}}</td>
+		<td width="178" align="center">{{course.endtime}}</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+
+<script>
+	$(function(){
+        $('#menu5').addClass('active')
+        $('#allmenu').accordion('select', '考试信息')
+    });
+</script>
+{% endblock %}

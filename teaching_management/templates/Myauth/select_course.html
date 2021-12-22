@@ -1,0 +1,148 @@
+{% extends 'Myauth/base.html' %}
+{% block student %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+	table>tbody>tr:hover{background-color:red}
+</style>
+<!--datagrid-->
+<div id="toolbox" style="padding:5px">
+	<a href="#" id="save" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="margin-left: 0%">保存选中</a>
+<!--	<a href="#" id="edit" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="margin-left: 0%">取消选中</a>-->
+	<a href="#" onclick='tableToExcel()' id="save_excel" class="easyui-linkbutton" style="margin-left: 0%">excel</a>
+</div>
+
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_name" width="178" align="center">选修课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+<!--			<th field="course_week" width="178" align="center">上课教室</th>-->
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">所属教师</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for course in returnlist%}
+	<tr class="trbody">
+		<td width="178" align="center"><input class="class_id" type="checkbox" value="{{course.course_id}}">{{course.course_id}}</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teacher_id}}</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+<div style="position:fixed;top:90%;display:flex;flex-direction:row;">
+	<div>
+		{%for pindex in plist%}
+		{%if pIndex == pindex%}
+		第{{pindex}}页&nbsp;&nbsp;
+		{%else%}
+		<a href="/select_course{{pindex}}/">第{{pindex}}页</a>&nbsp;&nbsp;
+		{%endif%}
+		{%endfor%}
+	</div>
+</div>
+
+
+<script>
+	$(function(){
+			$('#menu4').addClass('active')
+			$('#allmenu').accordion('select', '选课')
+		})
+</script>
+
+<script type="text/javascript">
+
+    function isInArray(arr,value){
+    for(var i = 0; i < arr.length; i++){
+        if(value === arr[i]){
+            return true;
+        }
+    }
+    return false;
+    }
+
+    $("#save").click(function(){
+        let courseid_str = ''
+        let objectlist = document.getElementsByClassName("class_id")
+        let labellist = []
+        for(let i=0;i<objectlist.length;i++){
+            if(objectlist[i].checked){
+                courseid_str += objectlist[i].value+','
+                if(isInArray(labellist,objectlist[i].parentNode.parentNode.children[5].innerHTML)){
+                    alert("这个时间段课程已经存在，不能再选")
+                    return false
+                }
+                labellist.push(objectlist[i].parentNode.parentNode.children[1].innerHTML)
+            }
+        }
+
+        let url = "{% url 'Myauth:学生保存课程' %}"
+		$.get(url, {'idlist':courseid_str}, function(data){
+            if (data=="1"){
+                alert("添加课程成功！")
+                location.reload();
+            }
+            else{
+                alert("课程时间被占用");
+                location.reload();
+            }
+        })
+    })
+
+	function tableToExcel(){
+		var objects_list = document.getElementById('table_body').children
+      //要导出的json数据
+      const jsonData = []
+      for(let i=0;i<objects_list.length;i++){
+      	let child_list = objects_list[i].children
+      	let child_dict = {
+      		num:child_list[0].innerHTML,
+      		name:child_list[1].innerHTML,
+      		room:child_list[2].innerHTML,
+      		card:child_list[3].innerHTML,
+      		class:child_list[4].innerHTML,
+      		currenttime:child_list[5].innerHTML,
+      		teacher:child_list[6].innerHTML,
+      	}
+      	jsonData.push(child_dict)
+      }
+      //列标题
+      let str = '<tr><td>课程号</td><td>课程名称</td><td>上课教室</td><td>学分</td><td>上课班级</td><td>上课时间</td><td>所属教师</td></tr>';
+      //循环遍历，每行加入tr标签，每个单元格加td标签
+      for(let i = 0 ; i < jsonData.length ; i++ ){
+        str+='<tr>';
+        for(let item in jsonData[i]){
+            //增加\t为了不让表格显示科学计数法或者其他格式
+            str+=`<td>${ jsonData[i][item] + '\t'}</td>`;
+        }
+        str+='</tr>';
+      }
+      //Worksheet名
+      let worksheet = 'Sheet1'
+      let uri = 'data:application/vnd.ms-excel;base64,';
+
+      //下载的表格模板数据
+      let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+      <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+        <x:Name>${worksheet}</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+        </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body><table>${str}</table></body></html>`;
+      //下载模板
+      window.location.href = uri + base64(template)
+    }
+    //输出base64编码
+    function base64 (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+</script>
+
+{% endblock %}

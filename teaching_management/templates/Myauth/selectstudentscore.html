@@ -1,0 +1,36 @@
+{% extends 'Myauth/base.html' %}
+{% load staticfiles %}
+{% block student %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+</style>
+{% endblock %}
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+            <th field="course_name" width="178" align="center">任课老师</th>
+			<th field="course_credit" width="323" align="center">班级</th>
+			<th field="course_teacher" width="178" align="center">分数</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for data in datalist%}
+	<tr class="trbody">
+		<td width="178" align="center">{{data.course_id}}</td>
+		<td width="178" align="center">{{data.course_type}}</td>
+		<td width="178" align="center">{{data.course_name}}</td>
+        <td width="178" align="center">{{data.teacher_name}}</td>
+		<td width="323" align="center">{{data.class_name}}</td>
+		<td width="178" align="center">{{data.score}}</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+{% endblock %}

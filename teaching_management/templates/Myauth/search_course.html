@@ -1,0 +1,94 @@
+{% extends 'Myauth/base_m.html' %}
+
+{% block manager %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+	table>tbody>tr:hover{background-color:red}
+</style>
+<!--查询-->
+<div id="toolbox" style="padding:5px">
+	<div>
+		<input id="searchcourse" size="30" style="line-height:20px;border:1px solid #ccc">
+		<a href="#" id="search">搜索</a>
+	</div>
+</div>
+<table id="tt" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_credit" width="323" align="center">上课班级</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">所属教师</th>
+		</tr>
+	</thead>
+	<tbody id="tbody">
+		{%for course in returnlist%}
+	<tr class="trbody">
+		<td width="178" align="center">{{course.course_id}}</td>
+		<td width="178" align="center">{{course.course_type}}</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="323" align="center">{{course.course_class}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teacher_id}}</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+
+<div style="position:fixed;top:90%;display:flex;flex-direction:row;">
+	<div>
+		{%for pindex in plist%}
+		{%if pIndex == pindex%}
+		第{{pindex}}页&nbsp;&nbsp;
+		{%else%}
+		<a href="/search{{pindex}}/">第{{pindex}}页</a>&nbsp;&nbsp;
+		{%endif%}
+		{%endfor%}
+	</div>
+</div>
+
+<script>
+		$(function(){
+			$('#menu7').addClass('active')
+			$('#allmenu').accordion('select', '查看课程')
+		})
+</script>
+<script>
+
+	$(".trbody").click(function(){
+		let node = $(this).children().eq(5)
+		if(node.text()=="")
+			return false
+		window.location.href="/addclbumindex/?id="+$(this).children(":first").text();
+	})
+
+	$("#search").click(function(){
+	url = "/search1/"
+	$.get(url, {'content':$("#searchcourse").val()}, function(data){
+			let tbody_str = ""
+			for(let i=0;i<data.returnlist.length;i++){
+				tbody_str += '<tr class="trbody">'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].course_id+'</td>'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].course_type+'</td>'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].course_name+'</td>'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].course_room+'</td>'
+				tbody_str += '<td width="323" align="center">'+data.returnlist[i].credit+'</td>'
+				tbody_str += '<td width="323" align="center">'+data.returnlist[i].course_class+'</td>'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].course_label+'</td>'
+				tbody_str += '<td width="178" align="center">'+data.returnlist[i].teacher_id+'</td>'
+				tbody_str += '</tr>'
+			}
+            document.getElementById("tbody").innerHTML = ""
+            document.getElementById("tbody").innerHTML = tbody_str
+        })
+})
+</script>
+{% endblock %}

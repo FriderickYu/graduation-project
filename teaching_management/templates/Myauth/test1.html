@@ -1,0 +1,75 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>邮件</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/default/easyui.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/icon.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.easyui.min.js' %}"></script>
+    <style>
+        .login-body
+        {
+            margin-left: 50% !important;
+            position: relative;
+            left: -194px;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center">
+    <div class="login-body">
+        <div class="easyui-panel" title="找回密码" style="width:100%;max-width:400px;padding:30px 60px;">
+            {% csrf_token %}
+            <div style="margin-bottom:20px">
+                <input id="newpwd" type="text" class="easyui-passwordbox" lastDelay="50" label="新密码:" labelPosition="top" data-options="prompt:'请输入你的新密码'" style="width:100%;" />
+            </div>
+            <div style="margin-bottom:20px">
+                <input id="newpwd_again" type="text" class="easyui-passwordbox" lastDelay="50" label="确认密码:" labelPosition="top" data-options="prompt:'请再次输入你的新密码'" style="width:100%;"/>
+            </div>
+            <div>
+                <div><button id="btn" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">提交</button></div>
+                <div><a href="{% url 'Myauth:登录' %}" class="easyui-linkbutton" iconCls="icon-undo" style="width:100%;height:32px">返回到登录界面</a></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+$('#btn').click(function(){
+            var url = "{% url 'Myauth:重置密码' %}"
+           	let newpwd = $('#newpwd').val()
+            let newpwdagain = $('#newpwd_again').val()
+
+            if(newpwd==""){
+            alert("新密码不能为空");
+            return false}
+            if(newpwdagain==""){
+            alert("请确认密码");
+            return false}
+            if(newpwdagain!=newpwd){
+            alert("两次密码不一致");
+            location.reload();
+            return false}
+
+            $.get(url, {'password': newpwd}, function(data){
+                if (data.label=="1"){
+                	alert("重置密码成功")
+                    if(data.usertype=="1"){
+                    location.href= "{% url 'Myauth:登录' %}"
+                    }else{
+                    location.href= "{% url 'Myauth:登录' %}"
+                    }
+                }
+                else{
+                    alert("邮箱错误");
+                    location.reload();
+                }
+            })
+
+        })
+        </script>
+</body>
+</html>

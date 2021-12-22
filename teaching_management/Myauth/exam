@@ -1,0 +1,22 @@
+public class a{
+private int length_id;
+private int length_name;
+private int id_top=0;
+private int name_top=0;
+private int[] id;
+private int[] name;
+public boolean isFull(){
+   if(id_top==length_id){
+      return true;
+}
+   return false;
+if(name_top==length_name){
+      return true;
+}
+   return false;
+}
+
+public boolean isEmpty()
+{
+
+}

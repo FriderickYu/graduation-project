@@ -1,0 +1,70 @@
+{% extends 'Myauth/base_m.html' %}
+{% block manager %}
+    <div style="display:flex;flex-direction:column;position:relative;left:200px;top:100px;width:300px;">
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">课程编号：</div>
+            <div><input id="id" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">课程名称：</div>
+            <div><input id="name" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">周数：</div>
+            <div><input id="week" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">上课教室：</div>
+            <div><input id="room" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">学分：</div>
+            <div><input id="credit" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">上课班级：</div>
+            <div><input id="class" style="height:100%;outline:none;border-radius:10px;border:1px solid;" type="text" /></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px">
+            <div style="width:50%">第几节：</div>
+            <div><select id="label" style="height:100%;outline:none;border-radius:10px;border:1px solid;width:100px;" type="text">
+                <option value="1">第一节</option>
+                <option value="2">第二节</option>
+                <option value="3">第三节</option>
+                <option value="4">第四节</option>
+            </select></div>
+        </div>
+        <div style="display:flex;flex-direction:row;height:39px;line-height:39px;font-size:20px;margin-bottom:10px;justify-content:center">
+            <div><button style="width:100px;height:100%;border-radius:5px;background-color:#fff;" id="btn">添加课程</button></div>
+        </div>
+    </div>
+
+<script>
+    $("#btn").click(function(){
+        let url = "{% url 'Myauth:添加课程' %}"
+        datadict = {
+            'id':document.getElementById("id").value,
+            'name':document.getElementById("name").value,
+            'week':document.getElementById("week").value,
+            'room':document.getElementById("room").value,
+            'credit':document.getElementById("credit").value,
+            'class':document.getElementById("class").value,
+            'label':document.getElementById("label").value,
+        }
+        if(datadict.id=="" || datadict.name=="" || datadict.week=="" || datadict.room=="" || datadict.credit=="" || datadict.class=="" || datadict.label==""){
+            alert("还有未填项，所有内容必须全部填写齐全")
+            return false
+        }
+        $.get(url, datadict, function(data){
+            if (data=="1"){
+                alert("添加课程成功！")
+                location.reload();
+            }
+            else{
+                alert("添加课程失败");
+                location.reload();
+            }
+        })
+    })
+</script>
+{% endblock %}

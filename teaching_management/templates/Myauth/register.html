@@ -1,0 +1,300 @@
+{% extends 'Myauth/base_m.html' %}
+{% load staticfiles %}
+{% block manager %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+</style>
+{% endblock %}
+<div id="tt" class="easyui-tabs" style="width:100%;height:100%;">
+    <div title="批量注册" style="overflow:auto;padding:20px;display:none;">
+        <input type="file" id="file">
+        <input type="button" onclick="sendTarget()" value="导入"/>
+    </div>
+    <div title="学生注册" style="padding:20px;display:none;">
+        <div style="text-align: center">
+            <div class="register-body">
+                <div style="margin:20px 0;"></div>
+                <div class="easyui-panel" title="注册" style="width:100%;max-width:600px;max-height:600px;">
+                    <table id="table_wrapper" width=100% height=100%  bgcolor=#ccc cellspacing="1" align="center">
+                        <tr bgcolor="white">
+                            <td>学号</td>
+                            <td><input id="id" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>密码</td>
+                            <td><input id="password" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>姓名</td>
+                            <td><input id="name" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>性别</td>
+                            <td><select id="sex">{% for  sex in infolist.sex %}<option value={{sex|safe}}>{{sex|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>出生日期</td>
+                            <td><input id="birthday" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>学院</td>
+                            <td><select id="department">{% for  department in infolist.department %}<option value={{department|safe}}>{{department|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>入学日期</td>
+                            <td><input id="admission_date" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>班级</td>
+                            <td><input id="clbum" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>电话</td>
+                            <td><input id="phone" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>邮箱</td>
+                            <td><input id="email" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                    </table>
+                    <div>
+                        <button id="confirm" onclick="signalRegiste(1)" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="教师注册" style="overflow:auto;padding:20px;display:none;">
+        <div style="text-align: center">
+            <div class="register-body">
+                <div style="margin:20px 0;"></div>
+                <div class="easyui-panel" title="注册" style="width:100%;max-width:600px;max-height:600px;">
+                    <table id="table_wrapper1" width=100% height=100%  bgcolor=#ccc cellspacing="1" align="center">
+                        <tr bgcolor="white">
+                            <td>教师工号</td>
+                            <td><input id="id1" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>密码</td>
+                            <td><input id="password1" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>姓名</td>
+                            <td><input id="name1" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>性别</td>
+                            <td><select id="sex1">{% for  sex in infolist.sex %}<option value={{sex|safe}}>{{sex|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>出生日期</td>
+                            <td><input id="birthday1" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>学院</td>
+                            <td><select id="department1">{% for  department in infolist.department %}<option value={{department|safe}}>{{department|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>入职日期</td>
+                            <td><input id="admission_date1" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>职称</td>
+                            <td><select id="rank">{% for  rank in infolist.rank %}<option value={{rank|safe}}>{{rank|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>电话</td>
+                            <td><input id="phone1" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>邮箱</td>
+                            <td><input id="email1" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                    </table>
+                    <div>
+                        <button id="confirm1" onclick="signalRegiste(2)" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="管理员注册" style="padding:20px;display:none;">
+        <div style="text-align: center">
+            <div class="register-body">
+                <div style="margin:20px 0;"></div>
+                <div class="easyui-panel" title="注册" style="width:100%;max-width:600px;max-height:600px;">
+                    <table id="table_wrapper2" width=100% height=100%  bgcolor=#ccc cellspacing="1" align="center">
+                        <tr bgcolor="white">
+                            <td>管理员工号</td>
+                            <td><input id="id2" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>密码</td>
+                            <td><input id="password2" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>姓名</td>
+                            <td><input id="name2" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>性别</td>
+                            <td><select id="sex2">{% for  sex in infolist.sex %}<option value={{sex|safe}}>{{sex|safe}}</option>{% endfor %}</select></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>出生日期</td>
+                            <td><input id="birthday2" type="text" /></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>电话</td>
+                            <td><input id="phone2" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                        <tr bgcolor="white">
+                            <td>邮箱</td>
+                            <td><input id="email2" style="border:0px;outline: none;height:100%;line-height:100%;" value=></td>
+                        </tr>
+                    </table>
+                    <div>
+                        <button id="confirm2" onclick="signalRegiste(0)" class="easyui-linkbutton" iconCls="icon-ok" style="width:100%;height:32px">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var result = []
+	$(function(){
+			$('#menu5').addClass('active')
+			$('#allmenu').accordion('select', '录入课程')
+		})
+		//首先监听input框的变动，选中一个新的文件会触发change事件
+    document.querySelector("#file").addEventListener("change", function () {
+    //获取到选中的文件
+    var file = document.querySelector("#file").files[0];
+    var type = file.name.split('.');
+    if (type[type.length - 1] !== 'xlsx' && type[type.length - 1] !== 'xls') {
+      alert('只能选择excel文件导入');
+      return false;
+    }
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const zzexcel = window.XLS.read(data, {
+        type: 'binary'
+      });
+      for (let i = 0; i < zzexcel.SheetNames.length; i++) {
+        const newData = window.XLS.utils.sheet_to_json(zzexcel.Sheets[zzexcel.SheetNames[i]]);
+        result.push(...newData)
+      }
+    }
+  });
+    var sendTarget = function(){
+        if(result==null){
+            return false
+        }
+         var form = new FormData(); // FormData 对象
+        form.append("data", JSON.stringify(result)); // 文件对象
+        $.ajax({
+            url: "{% url 'Myauth:批量注册' %}", //url地址
+            type: 'POST',                 //上传方式
+            data: form,                   // 上传formdata封装的数据
+            dataType: 'JSON',
+            cache: false,                  // 不缓存
+            processData: false,        // jQuery不要去处理发送的数据
+            contentType: false,         // jQuery不要去设置Content-Type请求头
+            success:function (data) {           //成功回调
+               var data = data
+               if(data.data.length==0){
+                alert('用户添加成功')
+               }else{
+                for(let i=0;i<data.data.length;i++){
+                    alert(data.data[i]+'账号已存在，添加失败')
+                }
+               }
+            },
+           error:function (data) {           //失败回调
+                console.log(data);
+            }
+        });
+    }
+
+    laydate.render({
+                  elem: '#birthday2' //指定元素
+                });
+    laydate.render({
+                  elem: '#birthday1' //指定元素
+                });
+    laydate.render({
+                  elem: '#birthday' //指定元素
+                });
+    laydate.render({
+                  elem: '#admission_date1' //指定元素
+                });
+    laydate.render({
+                  elem: '#admission_date' //指定元素
+                });
+
+
+    signalRegiste = function(label){
+        console.log(label)
+        var data = {}
+        if(label==0){
+            if($("id2").val()=="" || $("#password2").val()=="" || $("#name2").val()=="" || $("#birthday2").val()=="" || $("#sex2").val()=="" || $("#phone2").val()=="" || $("#email2").val()==""){
+            alert("内容请填写补全")
+            return false
+            }
+            data = {'label':label,'id':$("#id2").val(),'password':$("#password2").val(),'name':$("#name2").val(),
+            'birthday':$("#birthday2").val(),'sex':$("#sex2").val(),'phone':$("#phone2").val(),'email':$("#email2").val()
+            }
+        }else if(label==2){
+            if($("id1").val()=="" || $("#password1").val()=="" || $("#name1").val()=="" || $("#birthday1").val()=="" || $("#sex1").val()=="" || $("#phone1").val()=="" || $("#email1").val()=="" ||$("#admission_date1").val()=="" || $("#rank").val()=="" || $("#department1").val()==""){
+            alert("内容请填写补全")
+            return false
+            }
+            data = {'label':label,'id':$("#id1").val(),'password':$("#password1").val(),'name':$("#name1").val(),
+            'birthday':$("#birthday1").val(),'sex':$("#sex1").val(),'phone':$("#phone1").val(),'email':$("#email1").val(),
+            'admission_date':$("#admission_date1").val(),'rank':$("#rank").val(),'department':$("#department1").val()
+            }
+        }else{
+            if($("id").val()=="" || $("#password").val()=="" || $("#name").val()=="" || $("#birthday").val()=="" || $("#sex").val()=="" || $("#phone").val()=="" || $("#email").val()=="" ||$("#admission_date").val()=="" || $("#clbum").val()=="" || $("#department").val()==""){
+            alert("内容请填写补全")
+            return false
+            }
+            data = {'label':label,'id':$("#id").val(),'password':$("#password").val(),'name':$("#name").val(),
+            'birthday':$("#birthday").val(),'sex':$("#sex").val(),'phone':$("#phone").val(),'email':$("#email").val(),
+            'admission_date':$("#admission_date").val(),'clbum':$("#clbum").val(),'department':$("#department").val(),
+            }
+        }
+        var form = new FormData(); // FormData 对象
+        form.append("data", JSON.stringify(data)); // 文件对象
+        $.ajax({
+            url: "{% url 'Myauth:单个注册' %}", //url地址
+            type: 'POST',                 //上传方式
+            data: form,                   // 上传formdata封装的数据
+            dataType: 'JSON',
+            cache: false,                  // 不缓存
+            processData: false,        // jQuery不要去处理发送的数据
+            contentType: false,         // jQuery不要去设置Content-Type请求头
+            success:function (data) {           //成功回调
+               if(data=='0'){
+                    alert("账号已存在")
+                    location.reload()
+               }else if(data=='1'){
+                    alert("注册成功")
+                    location.reload()
+               }else{
+                    alert("格式不对")
+                    location.reload()
+               }
+            },
+           error:function (data) {           //失败回调
+                console.log(data);
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'Myauth/base_m.html' %}
+{% block manager %}
+<style>
+	.main{
+	    display:flex;
+	    flex-direction:column;
+	    margin:50px;
+	    width:600px;
+	}
+	.content{
+	    display:flex;
+	    flex-direction:row;
+	    height:38px;
+	    line-height:38px;
+	    border:0.5px solid rgba(0,0,0,0.2);
+	    width:600px;
+	}
+	.label{
+	    width:150px;
+	    border-right:0.5px solid rgba(0,0,0,0.2);
+	    text-align:center;
+	    background-color:#ddd;
+	}
+
+	.text{
+	    width:150px;
+	    border-right:1px solid rgba(0,0,0,0.2);
+	    text-align:center;
+	    }
+	.textinput{
+	    border:0px;
+	    height:90%;
+	    width:135px;
+	    outline:none;
+	}
+</style>
+
+<div id="toolbox" style="padding:5px">
+    <a href="{% url 'Myauth:审核个人信息' %}" id="withdraw" class="easyui-linkbutton" data-options="iconCls:'icon-undo'" style="margin-left: 0%">返回</a>
+	<a href="#" id="save" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="margin-left: 0%">保存</a>
+	<a href="#" id="edit" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="margin-left: 0%">修改</a>
+</div>
+{%if label == 0 %}
+    <div class="main">
+    <div class="content">
+        <div class="label">学号</div>
+        <div class="text">{{person.student_id}}</div>
+        <div class="label">姓名</div>
+        <div class="text">{{person.name}}</div>
+    </div>
+    <div class="content">
+        <div class="label">性别</div>
+        <div class="text">{{person.sex}}</div>
+        <div class="label">出生日期</div>
+        <div class="text">{{person.birthday|date:"Y-m-d"}}</div>
+    </div>
+    <div class="content">
+        <div class="label">学院</div>
+        <div class="text">{{person.department}}</div>
+        <div class="label">入学日期</div>
+        <div class="text">{{person.admission_date|date:"Y-m-d"}}</div>
+    </div>
+    <div class="content">
+        <div class="label">电话</div>
+        <div class="text">{{person.phone}}</div>
+        <div class="label">邮箱</div>
+        <div class="text">{{person.email}}</div>
+    </div>
+        <div class="content">
+        <div class="label">班级</div>
+        <div class="text" style="width:450px;border:1px solid rgba(0,0,0,0.2);text-align:center">{{person.clb}}</div>
+    </div>
+        <input type="hidden" id="person_student" value="{{person.student_id}}" />
+</div>
+{% else %}
+<div class="main">
+    <div class="content">
+        <div class="label">教师工号</div>
+        <div class="text">{{person.teacher_id}}</div>
+        <div class="label">姓名</div>
+        <div class="text">{{person.name}}</div>
+    </div>
+    <div class="content">
+        <div class="label">性别</div>
+        <div class="text">{{person.sex}}</div>
+        <div class="label">出生日期</div>
+        <div class="text">{{person.birthday|date:"Y-m-d"}}</div>
+    </div>
+    <div class="content">
+        <div class="label">学院</div>
+        <div class="text">{{person.depart}}</div>
+        <div class="label">入职日期</div>
+        <div class="text">{{person.admission_date|date:"Y-m-d"}}</div>
+    </div>
+    <div class="content">
+        <div class="label">职称</div>
+        <div class="text">{{person.rank}}</div>
+        <div class="label">电话</div>
+        <div class="text">{{person.phone}}</div>
+    </div>
+    <div class="content">
+        <div class="label">邮箱</div>
+        <div class="text" style="width:450px;border:1px solid rgba(0,0,0,0.2);text-align:center">{{person.email}}</div>
+    </div>
+    <input type="hidden" id="person_teacher" value="{{person.teacher_id}}" />
+</div>
+{%endif%}
+
+<script>
+    $("#edit").click(function(){
+        var label = {{label|safe}}
+        if(label==1){
+                    $(".text").map(function(index){
+
+            if(index==3){
+                $(this).html("<input id='birthday' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#birthday' //指定元素
+                });
+            }else if(index==5){
+                $(this).html("<input id='admission_date' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#admission_date' //指定元素
+                });
+            }else if(index==2){
+                $(this).html("<select class='textinput'>{% for  gender in infolist.gender %}<option value='"+{{gender|safe}}[0]+"'>"+{{gender|safe}}[1]+"</option>{% endfor %}</select>")
+            }else if(index==4){
+                $(this).html("<select class='textinput'>{% for  department in infolist.department %}<option value='{{department|safe}}'>{{department|safe}}</option>{% endfor %}</select>")
+            }else if(index==6){
+                $(this).html("<select class='textinput'>{% for  rank in infolist.rank %}<option value='"+{{rank|safe}}[0]+"'>"+{{rank|safe}}[1]+"</option>{% endfor %}</select>")
+            }
+            else{
+                $(this).html("<input class='textinput' value='"+$(this).text()+"' />")
+            }
+
+
+        })
+                }else if(label==0){
+                    $(".text").map(function(index){
+
+            if(index==3){
+                $(this).html("<input id='birthday' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#birthday' //指定元素
+                });
+            }else if(index==5){
+                $(this).html("<input id='admission_date' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#admission_date' //指定元素
+                });
+            }else if(index==2){
+                $(this).html("<select class='textinput'>{% for  gender in infolist.gender %}<option value='"+{{gender|safe}}[0]+"'>"+{{gender|safe}}[1]+"</option>{% endfor %}</select>")
+            }else if(index==4){
+                $(this).html("<select class='textinput'>{% for  department in infolist.department %}<option value='{{department|safe}}'>{{department|safe}}</option>{% endfor %}</select>")
+            }else{
+                $(this).html("<input class='textinput' value='"+$(this).text()+"' />")
+            }
+
+
+        })
+            }else if(label==0){
+                    $(".text").map(function(index){
+
+            if(index==3){
+                $(this).html("<input id='birthday' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#birthday' //指定元素
+                });
+            }else if(index==5){
+                $(this).html("<input id='admission_date' class='textinput' value='"+$(this).text()+"' />")
+                //执行一个laydate实例
+                laydate.render({
+                  elem: '#admission_date' //指定元素
+                });
+            }else if(index==2){
+                $(this).html("<select class='textinput'>{% for  gender in infolist.gender %}<option value='"+{{gender|safe}}[0]+"'>"+{{gender|safe}}[1]+"</option>{% endfor %}</select>")
+            }else if(index==4){
+                $(this).html("<select class='textinput'>{% for  department in infolist.department %}<option value='{{department|safe}}'>{{department|safe}}</option>{% endfor %}</select>")
+            }else if(index==7){
+                $(this).html("<select class='textinput'>{% for  grade in infolist.grade %}<option value='"+{{grade|safe}}[0]+"'>"+{{grade|safe}}[1]+"</option>{% endfor %}</select>")
+            }
+            else{
+                $(this).html("<input class='textinput' value='"+$(this).text()+"' />")
+            }
+
+
+        })
+            }
+
+
+    })
+
+    $("#save").click(function(){
+        patter = /input/
+        if(!patter.test($(".text").eq(0).html())){
+            alert("请先点修改")
+        }else{
+            var label = {{label|safe}}
+            var data = null
+            if(label==0){
+                data = {
+                    'username':$(".textinput").eq(0).val(),
+                    'name':$(".textinput").eq(1).val(),
+                    'sex':$(".textinput").eq(2).val(),
+                    'birthday':$(".textinput").eq(3).val(),
+                    'department':$(".textinput").eq(4).val(),
+                    'admission_date':$(".textinput").eq(5).val(),
+                    'clbum':$(".textinput").eq(8).val(),
+                    'phone':$(".textinput").eq(6).val(),
+                    'email':$(".textinput").eq(7).val(),
+                    'person_student':$("#person_student").val()
+                    }
+                }else{
+                    data = {
+                    'username':$(".textinput").eq(0).val(),
+                    'name':$(".textinput").eq(1).val(),
+                    'sex':$(".textinput").eq(2).val(),
+                    'birthday':$(".textinput").eq(3).val(),
+                    'department':$(".textinput").eq(4).val(),
+                    'admission_date':$(".textinput").eq(5).val(),
+                    'rank':$(".textinput").eq(6).val(),
+                    'phone':$(".textinput").eq(7).val(),
+                    'email':$(".textinput").eq(8).val(),
+                    'person_teacher':$("#person_teacher").val()
+                    }
+                }
+            }
+            let url = "{% url 'Myauth:修改用户信息' %}"
+            $.get(url, {'label':label,'data':JSON.stringify(data)}, function(data){
+                if (data.label=="1"){
+                    alert("修改成功！")
+                    location.href = '{% url 'Myauth:审核个人信息' %}';
+                }
+                else{
+                    alert("账号已存在");
+                    location.href = '{% url 'Myauth:审核个人信息' %}';
+                }
+            })
+    })
+
+</script>
+
+{% endblock %}

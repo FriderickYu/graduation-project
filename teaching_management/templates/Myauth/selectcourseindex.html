@@ -1,0 +1,40 @@
+{% extends 'Myauth/base_t.html' %}
+{% load staticfiles %}
+{% block teacher %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+	.left{
+	    width:150px;
+	    height:35px;
+	    line-height:35px;
+	    margin-right:20px;
+	    color:#000;
+	    text-align:center;
+	}
+
+	.right{
+	    width:150px;
+	    height:35px;
+	    line-height:35px;
+	    color:#000;
+	    text-align:center;
+	}
+</style>
+{% endblock %}
+    <div style="display:flex;flex-direction:column">
+        {%for course in courselist%}
+        <div style="display:flex;flex-direction:row">
+            <div class="left">课程名:</div><div class="right"><a style="text-decoration:none;margin:10px" href="/selectsoreindex/?type={{course.course_id}}">{{course.course_name}}</a></div>
+        </div>
+        {%endfor%}
+    </div>
+<script>
+    $(function(){
+        $('#menu6').addClass('active')
+        $('#allmenu').accordion('select', '查看成绩')
+    });
+</script>
+{% endblock %}

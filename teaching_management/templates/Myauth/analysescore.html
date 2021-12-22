@@ -1,0 +1,99 @@
+{% extends 'Myauth/base_t.html' %}
+{% load staticfiles %}
+{% block teacher %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+	.left{
+	    width:150px;
+	    height:35px;
+	    line-height:35px;
+	    margin-right:20px;
+	    color:#000;
+	    text-align:center;
+	}
+
+	.right{
+	    width:150px;
+	    height:35px;
+	    line-height:35px;
+	    color:#000;
+	    text-align:center;
+	}
+</style>
+{% endblock %}
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+            <th field="course_teacher" width="178" align="center">平均分</th>
+            <th field="course_teacher" width="178" align="center">最高分</th>
+            <th field="course_teacher" width="178" align="center">最低分</th>
+			<th field="course_teacher" width="178" align="center">难度</th>
+			<th field="course_teacher" width="323" align="center">图表</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for data in datalist%}
+	<tr class="trbody">
+		<td width="178" align="center"><input type="checkbox" name="courseID" value="{{data.course_id}}" />{{data.course_id}}</td>
+		<td width="178" align="center">{{data.course_type}}</td>
+		<td width="178" align="center">{{data.course_name}}</td>
+        <td width="178" align="center">{{data.meanscore}}</td>
+		<td width="323" align="center">{{data.maxscore}}</td>
+        <td width="323" align="center">{{data.minscore}}</td>
+		<td width="178" align="center">{{data.scorelabel}}</td>
+		<td width="323" align="center"><input class="scorebtn" type="button" value="成绩关联图" /><a href="/scorelayer/?type={{data.course_id}}">成绩分布</a></td>
+	</tr>
+	{%endfor%}
+	<div><input id="compare" type="button" value="显示分析图"/></div>
+	<div><input id="comparebtn" type="button" value="综合比较" /></div>
+	</tbody>
+</table>
+<script>
+
+
+    $(function(){
+        $('#menu7').addClass('active')
+        $('#allmenu').accordion('select', '老师成绩分析')
+    });
+
+	$("#compare").click(function(){
+		location.href = "{% url 'Myauth:成绩总图' %}"
+	})
+
+	$(".scorebtn").click(function(){
+		let data = $(this).parent().parent().children().eq(0).text()
+		let url = "{% url 'Myauth:各班级优生率' %}"
+		$.get(url, {'type':data}, function(data){
+			if(data=="1"){
+				location.href = "{% url 'Myauth:单科总图' %}"
+			}
+		})
+	})
+
+	$("#comparebtn").click(function(){
+		if($("input[name='courseID']:checked").length<=1){
+			alert("必须选中2个科目以上")
+			return false
+		}
+		let id_list = []
+		let label_list = []
+		$("input[name='courseID']:checked").each(function(){
+			id_list.push($(this).val())
+			label_list.push($(this).parent().parent().children().eq(6).text())
+		})
+		let url = "{% url 'Myauth:综合比较' %}"
+		$.get(url, {'id_list':id_list,'label_list':label_list}, function(data){
+			if(data=="1"){
+				location.href = "{% url 'Myauth:综合比较页' %}"
+			}
+		})
+	})
+</script>
+{% endblock %}

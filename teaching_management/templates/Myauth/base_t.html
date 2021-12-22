@@ -1,0 +1,77 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师系统模板</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/default/easyui.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-easyui-1.7.0/themes/icon.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-easyui-1.7.0/jquery.easyui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/laydate.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/xlsx.core.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/xlsx.full.min.js' %}"></script>
+    <style>
+        .panel.layout-panel.layout-panel-west.panel-htop.layout-split-west{
+            width: 150px !important;
+        }
+
+        .my-menu{
+            display: block;
+            padding: 6px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        a:link {
+            font-size: 12px;
+            color: #000000;
+            text-decoration: none;
+        }
+        a:visited {
+            font-size: 12px;
+            color: #000000;
+            text-decoration: none;
+        }
+        a:hover {
+            font-size: 12px;
+            color: #999999;
+        }
+        .active{
+            background: #c0cde9;
+            color: white;
+        }
+    </style>
+    {% block style %}
+    {% endblock %}
+</head>
+<body class="easyui-layout" style="margin-left: 10px;margin-right: 10px;">
+<div style="margin:20px 0;"></div>
+<div class="easyui-layout" style="width:100%;height:100%;position:fixed;">
+    <div data-options="region:'north'" style="height:50px" title="蒹葭教学管理系统"></div>
+    <div data-options="region:'south',split:true" style="height:50px;"></div>
+    <div data-options="region:'west',split:true" title="导航栏" style="width:100px;">
+        <div id='allmenu' class="easyui-accordion" data-options="fit:true,border:false">
+            <div title="用户菜单"  style="padding:10px;">
+                <a class="my-menu" id="menu1" href="{% url 'Myauth:登录' %}">退出系统</a>
+                <a class="my-menu" id="menu2" href="{% url 'Myauth:教师信息' %}">个人信息</a>
+                <a class="my-menu" id="menu3" href="{% url 'Myauth:修改密码' %}">修改密码</a>
+            </div>
+            <div title="课程信息"  style="padding:10px;">
+                <a class="my-menu" id="menu4" href="{% url 'Myauth:教师课程表' %}">查看课程表</a>
+            </div>
+            <div title="考试信息"  style="padding:10px;">
+                <a class="my-menu" id="menu5" href="{% url 'Myauth:查看老师考试信息' %}">考试信息</a>
+                <a class="my-menu" id="menu6" href="{% url 'Myauth:查看成绩页' %}">查看成绩</a>
+                <a class="my-menu" id="menu7" href="{% url 'Myauth:老师成绩分析' %}">老师成绩分析</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',title:'内容',iconCls:'icon-lock'">
+        {% block teacher %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>

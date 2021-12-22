@@ -1,0 +1,168 @@
+{% extends 'Myauth/base_m.html' %}
+{% load staticfiles %}
+{% block manager %}
+{% block style %}
+<style>
+	.register-body{
+		margin-left: 30%;
+	}
+</style>
+{% endblock %}
+
+<div id="tt" class="easyui-tabs" style="width:100%;height:100%;">
+    <div title="必修" style="padding:20px;display:none;">
+        <div style="text-align: center">
+            <div class="register-body">
+                <div style="margin:20px 0;"></div>
+                <div class="easyui-panel" title="必修" style="width:100%;max-width:900px;max-height:600px;">
+                    <table id='table' toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_type" width="178" align="center">课程类别</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+<!--			<th field="course_week" width="178" align="center">上课教室</th>-->
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_credit" width="323" align="center">上课班级</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">监考教师</th>
+            <th field="test_time" width="178" align="center">开始时间</th>
+            <th field="test_time" width="178" align="center">结束时间</th>
+			<th field="test_time" width="178" align="center">操作</th>
+		</tr>
+	</thead>
+	<tbody id="body">
+	{%for course in clbumlist%}
+	<tr class="trbody">
+		<td width="178" class="course_id" align="center">{{course.course_id}}</td>
+		<td width="178" align="center">必修</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="323" align="center">{{course.clbum}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teacher_name}}</td>
+		<td width="178" align="center" class="start">{{course.starttime}}</td>
+		<td width="178" align="center" class="end">{{course.endtime}}</td>
+		<td width="178" align="center" class="updatebtn"><input class="deletebtn" type="button" value="删除"/><input class="testid" type="hidden" value="{{course.testid}}" /></td>
+        <td width="178" align="center" class="savebtn"><input type="button" value="保存修改"/><input class="testid" type="hidden" value="{{course.testid}}" /><input class="testpk" type="hidden" value="{{course.testnum}}" /></td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="选修" style="overflow:auto;padding:20px;display:none;">
+        <div style="text-align: center">
+            <div class="register-body">
+                <div style="margin:20px 0;"></div>
+                <div class="easyui-panel" title="选修" style="width:100%;max-width:900px;max-height:600px;">
+                    <table id="table_select" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_type" width="178" align="center">课程类别</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+<!--			<th field="course_week" width="178" align="center">上课教室</th>-->
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">监考教师</th>
+			<th field="test_time" width="178" align="center">开始时间</th>
+            <th field="test_time" width="178" align="center">结束时间</th>
+			<th field="test_time" width="178" align="center">操作</th>
+		</tr>
+	</thead>
+	<tbody id="body_select">
+	{%for course in selectlist%}
+	<tr class="trbody">
+		<td width="178" class="course_id" align="center">{{course.course_id}}</td>
+		<td width="178" align="center">选修</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teacher_name}}</td>
+		<td width="178" align="center" class="start">{{course.starttime}}</td>
+		<td width="178" align="center" class="end">{{course.endtime}}</td>
+		<td width="178" align="center" class="updatebtn"><input class="deletebtn" type="button" value="删除"/><input class="testid" type="hidden" value="{{course.testid}}" /></td>
+        <td width="178" align="center" class="savebtn"><input type="button" value="保存修改"/><input class="testid" type="hidden" value="{{course.testid}}" /><input class="testpk" type="hidden" value="{{course.testnum}}" /></td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        $('#menu10').addClass('active')
+        $('#allmenu').accordion('select', '查看考试信息')
+    });
+    $(".start").click(function(){
+    	$(this).html("")
+		$(this).html("<input class='starttime' value='"+$(this).text()+"' />")
+		//执行一个laydate实例
+		laydate.render({
+		  elem: '.starttime', //指定元素
+		  type:'datetime'
+		});
+		$(this).unbind()
+    })
+
+    $(".end").click(function(){
+    	$(this).html("")
+		$(this).html("<input class='endtime' value='"+$(this).text()+"' />")
+		//执行一个laydate实例
+		laydate.render({
+		  elem: '.endtime', //指定元素
+		  type:'datetime'
+		});
+		$(this).unbind()
+    })
+
+
+    $(".deletebtn").click(function(e){
+        let url = "{% url 'Myauth:删除考试信息' %}"
+		let datadict = {'course_id':$(this).parent().parent().children(".course_id").text(),'test_id':$(this).next().val()}
+		$.get(url, datadict, function(data){
+            if (data=="1"){
+                alert("删除考试成功！")
+                location.reload();
+            }
+            else if(data=='0'){
+                alert("删除考试失败！");
+                location.reload();
+            }
+        })
+    })
+
+
+	$(".savebtn").click(function(e){
+		if($(this).prev().prev().html()=="" || $(this).prev().prev().prev().html()==""){
+			return false
+		}
+		let url = "{% url 'Myauth:更新考试信息' %}"
+		let datadict = {'test_id':$(this).find('.testid').val(),'course_id':$(this).parent().children(".course_id").text(),'starttime':$(this).parent().find('.start').children("input").val(),'endtime':$(this).parent().find('.end').children("input").val()}
+		$.get(url, datadict, function(data){
+            if (data=="1"){
+                alert("更新考试成功！")
+                location.reload();
+            }
+            else if(data=='0'){
+                alert("更新考试失败！");
+                location.reload();
+            }
+        })
+	})
+</script>
+{% endblock %}

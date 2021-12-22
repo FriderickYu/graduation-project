@@ -1,0 +1,43 @@
+{% extends 'Myauth/base_m.html' %}
+
+{% block manager %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+	table>tbody>tr:hover{background-color:red}
+	#btn:hover{cursor:pointer;background-color:#90b575}
+</style>
+<!--查询-->
+<div id="toolbox" style="padding:5px">
+	<div>
+		<input id="searchcourse" size="30" style="line-height:20px;border:1px solid #ccc">
+		<a href="#" id="search">搜索</a>
+	</div>
+</div>
+        <div style="display:flex;flex-direction:column;margin:50px;width:200px">
+		{%for clbum in clbumlist%}
+            <div style="width:200px;height:35px;line-height:35px;text-align:center;border:1px solid #0094ff;margin-bottom:5px;"><input class="content" type="checkbox" value="{{clbum.class_name}}" />{{clbum.class_name}}</div>
+	    {%endfor%}
+            <div style="widht:200px;display:flex;justify-content:center"><div id="btn" style="width:100px;height:35px;border:1px solid #0094ff;line-height:35px;text-align:center;">添加</div></div>
+            <input id="course_id" type="hidden" value="{{course_id}}" />
+        </div>
+
+<script>
+    $("#btn").click(function(){
+        let content = ""
+        $(".content").each(function(){
+            if($(this).is(':checked')){
+                content += $(this).val() + ','
+            }
+        })
+        url = "{% url 'Myauth:添加班级' %}"
+	    $.get(url, {'content':content,'course_id':$("#course_id").val()}, function(data){
+	        if(data=="1"){
+	            alert("添加成功")
+	        }else{
+	            alert("添加失败")
+	        }
+			location.reload();
+        })
+    })
+</script>
+{% endblock %}

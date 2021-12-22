@@ -1,0 +1,252 @@
+{% extends 'Myauth/base_m.html' %}
+{% block manager %}
+<style>
+	table,table tr th, table tr td { border:1px solid #0094ff;}
+	table>tbody>tr:hover{background-color:red}
+</style>
+<!--datagrid-->
+<div id="toolbox" style="padding:5px">
+	<a href="#" id="update_add" class="easyui-linkbutton" data-options="iconCls:'icon-add'" style="margin-left: 0%">增加课程</a>
+	<a href="#" id="update_delete" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="margin-left: 0%">删除课程</a>
+	<a href="#" id="save" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="margin-left: 0%">保存</a>
+	<a href="#" id="edit" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="margin-left: 0%">修改</a>
+	<a href="#" onclick='tableToExcel()' id="save_excel" class="easyui-linkbutton" style="margin-left: 0%">excel</a>
+</div>
+
+<table id="table_wrapper" toolbar="#toolbox" iconCls="icon-search" rownumbers="true" pagination="true">
+	<thead>
+		<tr>
+<!--			TODO 待修改-->
+			<th field="course_id" width="178" align="center">课程号</th>
+			<th field="course_id" width="178" align="center">课程类型</th>
+			<th field="course_name" width="178" align="center">课程名称</th>
+			<th field="course_time" width="178" align="center">上课教室</th>
+			<th field="course_room" width="323" align="center">学分</th>
+			<th field="course_credit" width="323" align="center">上课班级</th>
+			<th field="course_teacher" width="178" align="center">上课时间</th>
+			<th field="course_class" width="178" align="center">所属教师</th>
+		</tr>
+	</thead>
+	<tbody id="table_body">
+	{%for course in returnlist%}
+	<tr class="trbody">
+		<td width="178" align="center">{{course.course_id}}</td>
+		<td width="178" align="center">{{course.course_type}}</td>
+		<td width="178" align="center">{{course.course_name}}</td>
+<!--		<td width="178" align="center">{{course.course_week}}</td>-->
+		<td width="178" align="center">{{course.course_room}}</td>
+		<td width="323" align="center">{{course.credit}}</td>
+		<td width="323" align="center">{{course.course_class}}</td>
+		<td width="178" align="center">{{course.course_label}}</td>
+		<td width="178" align="center">{{course.teacher_id}}</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+</table>
+<div style="position:fixed;top:90%;display:flex;flex-direction:row;">
+	<div>
+		{%for pindex in plist%}
+		{%if pIndex == pindex%}
+		第{{pindex}}页&nbsp;&nbsp;
+		{%else%}
+		<a href="/pag{{pindex}}/">第{{pindex}}页</a>&nbsp;&nbsp;
+		{%endif%}
+		{%endfor%}
+	</div>
+</div>
+
+<script>
+		$(function(){
+			$('#menu6').addClass('active')
+			$('#allmenu').accordion('select', '录入课程')
+		})
+</script>
+<script type="text/javascript">
+	var label = 0
+	var applabel = 0
+	var courseId = ""
+	var currentObj = null
+	$(".trbody").click((e)=>{
+		courseId = e.currentTarget.children[0].innerHTML
+		currentObj = e.currentTarget
+		for(let i=0;i<e.currentTarget.parentNode.children.length;i++){
+			e.currentTarget.parentNode.children[i].style.background = "#fff"
+		}
+		e.currentTarget.style.background = "red"
+	})
+
+	function selectType(){
+		if($("#type").val()=="选修"){
+			$("#department").parent().html("选修不用班级")
+		}else{
+			let content = '<select id="department" onchange="changeDepartment()"><option value="999">请选择</option>{%for department in departmentlist%}<option value="{{ forloop.counter0 }}">{{department}}</option>{%endfor%}</select>'
+			$("#type").parent().next().next().next().next().html(content)
+		}
+	}
+
+	$("#update_delete").click(function(){
+		let url = "{% url 'Myauth:删除课程' %}"
+		$.get(url, {'id':courseId}, function(data){
+            if (data=="1"){
+                alert("删除课程成功！")
+                location.reload();
+            }
+            else{
+                alert("删除课程失败");
+                location.reload();
+            }
+        })
+	})
+
+	$("#update_add").click(function(){
+		applabel = 1
+		let teacherstr = ""
+		{%for teacher in teacherlist%}
+			teacherstr += '<option value="{{teacher.teacher}}"> {{teacher.teacher_name}} </option>'
+		{%endfor%}
+		var add_str = ''
+		add_str += '<tr><td width="178" align="center"><input style="width:178px;border:0px" type="text" id="id" /></td><td width="178" align="center"><select id="type" onchange="selectType()"><option value="选修">选修</option><option value="必修">必修</option></select></td><td width="178" align="center"><input style="width:178px;border:0px" type="text" id="name" /></td>'
+		add_str += '</td><td width="178" align="center"><input style="width:178px;border:0px" type="text" id="room" /></td>'
+		add_str += '<td width="323" align="center"><input style="width:323px;border:0px" type="text" id="credit" /></td><td width="323" align="center">选修不用班级</td>'
+		add_str += '<td width="178" align="center"><select onchange="selectLabel()" style="width:80px;border:0px" id="startlabel"><option value="0">请选择</option><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="4">周五</option><option value="4">周六</option><option value="4">周日</option></select><select style="width:80px;" id="label"><option value="0">请选择</option></select></td>'
+		add_str += '<td width="178" align="center"><select style="width:178px;border:0px" id="teacher">'+ teacherstr +'</select></td></tr>'
+		$("#table_wrapper").append(add_str)
+	})
+
+	changeDepartment = function(){
+		label = 1
+		if($("#department").val()==999 && document.getElementById("type").value=="必修"){
+			$("#department").siblings().remove()
+			return false
+		}
+		let datalist = {{clbumlist|safe}}[parseInt($("#department").val())]
+		let content = "<select id='class'>"
+		for(let i=0;i<datalist.length;i++){
+			content += "<option value='"+datalist[i]+"'>"+datalist[i]+"</option>"
+		}
+		$("#department").siblings().remove()
+		$("#department").parent().append(content)
+	}
+
+	selectLabel = function(){
+		var start_value = $("#startlabel").val();
+		document.getElementById("label").innerHTML = ""
+		for(let i=0;i<12;i++){
+			let data_dict = ["请选择","第一节","第二节","第三节","第四节","第五节","第六节","第七节","第八节","第九节","第十节","第十一节"]
+			$("#label").append('<option value="'+(start_value*100+i).toString()+'">'+data_dict[i]+'</option>')
+		}
+
+
+	}
+
+
+	$("#save").click(function(){
+		if(label==0 && document.getElementById("type").value=="必修"){
+			alert("请选择学院")
+		}
+		var class_content = ""
+		if(document.getElementById("type").value=="选修"){
+			class_content = "1"
+		}else{
+			class_content = document.getElementById("class").value
+		}
+        let url = "{% url 'Myauth:添加课程' %}"
+        datadict = {
+        	'applabel':applabel,
+            'id':document.getElementById("id").innerHTML==""?document.getElementById("id").value:document.getElementById("id").innerHTML,
+            'type':document.getElementById("type").value,
+            'name':document.getElementById("name").value,
+<!--            'week':document.getElementById("week").value,-->
+            'room':document.getElementById("room").value,
+            'credit':document.getElementById("credit").value,
+            'class':class_content,
+            'label':document.getElementById("label").value,
+            'teacher':document.getElementById("teacher").value,
+        }
+        if(datadict.teacher=="" || datadict.id=="" || datadict.name=="" || datadict.room=="" || datadict.credit=="" || datadict.class=="" || datadict.label=="0"){
+            alert("还有未填项，所有内容必须全部填写齐全")
+            return false
+        }
+        $.get(url, datadict, function(data){
+            if (data=="1"){
+                alert("添加课程成功！")
+                location.reload();
+            }
+            else if(data=='0'){
+                alert("更新课程成功！");
+                location.reload();
+            }else if(data=='3'){
+                alert("这个课程已存在，不能添加！");
+                location.reload();
+            }else{
+            	alert("这个老师这节课没时间")
+            	location.reload();
+            }
+        })
+    })
+
+
+	$("#edit").click(function(){
+		let teacherstr = ""
+		{%for teacher in teacherlist%}
+			teacherstr += '<option value="{{teacher.teacher}}"> {{teacher.teacher_name}} </option>'
+		{%endfor%}
+		var add_str = ''
+		add_str += '<tr><td id="id" width="178" align="center">' + currentObj.children[0].innerHTML + '</td><td width="178" align="center"><select id="type" onchange="selectType()"><option value="选修">选修</option><option value="必修">必修</option></select></td><td width="178" align="center"><input value="'+currentObj.children[2].innerHTML+'" style="width:178px;border:0px" type="text" id="name" /></td>'
+		add_str += '<td width="178" align="center"><input value="'+currentObj.children[3].innerHTML+'" style="width:178px;border:0px" type="text" id="room" /></td>'
+		add_str += '<td width="323" align="center"><input value="'+currentObj.children[4].innerHTML+'" style="width:323px;border:0px" type="text" id="credit" /></td><td width="323" align="center">选修不用班级</td>'
+		add_str += '<td width="178" align="center"><select onchange="selectLabel()" style="width:80px;border:0px" id="startlabel"><option value="0">请选择</option><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="7">周日</option></select><select style="width:80px;" id="label"><option value="0">请选择</option></select></td>'
+		add_str += '<td width="178" align="center"><select style="width:178px;border:0px" id="teacher">'+ teacherstr +'</select></td></tr>'
+		currentObj.innerHTML = add_str
+	})
+
+
+	function tableToExcel(){
+		var objects_list = document.getElementById('table_body').children
+      //要导出的json数据
+      const jsonData = []
+      for(let i=0;i<objects_list.length;i++){
+      	let child_list = objects_list[i].children
+      	let child_dict = {
+      		num:child_list[0].innerHTML,
+      		name:child_list[1].innerHTML,
+      		room:child_list[2].innerHTML,
+      		card:child_list[3].innerHTML,
+      		class:child_list[4].innerHTML,
+      		currenttime:child_list[5].innerHTML,
+      		teacher:child_list[6].innerHTML,
+      	}
+      	jsonData.push(child_dict)
+      }
+      //列标题
+      let str = '<tr><td>课程号</td><td>课程名称</td><td>上课教室</td><td>学分</td><td>上课班级</td><td>上课时间</td><td>所属教师</td></tr>';
+      //循环遍历，每行加入tr标签，每个单元格加td标签
+      for(let i = 0 ; i < jsonData.length ; i++ ){
+        str+='<tr>';
+        for(let item in jsonData[i]){
+            //增加\t为了不让表格显示科学计数法或者其他格式
+            str+=`<td>${ jsonData[i][item] + '\t'}</td>`;
+        }
+        str+='</tr>';
+      }
+      //Worksheet名
+      let worksheet = 'Sheet1'
+      let uri = 'data:application/vnd.ms-excel;base64,';
+
+      //下载的表格模板数据
+      let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+      <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+        <x:Name>${worksheet}</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+        </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body><table>${str}</table></body></html>`;
+      //下载模板
+      window.location.href = uri + base64(template)
+    }
+    //输出base64编码
+    function base64 (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+</script>
+
+{% endblock %}
